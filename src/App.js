@@ -29,11 +29,6 @@ function App() {
         <PrivateRoutes exact path='/blogs' component={Blogs}/>
         <PrivateRoutes exact path='/post-blogs' component={PostBlogs}/>
         <PrivateRoutes exact path='/blogs/:postId' component={BlogsWithComments}/>
-
-
-
-
-
         {/* <PrivateRoutes component={pagesRoute}/> */}
       </Switch>
     </Router>

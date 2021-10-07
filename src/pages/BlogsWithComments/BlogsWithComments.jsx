@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { NavBar, Spinner } from "../../components";
 import { useAuth } from "../../contexts/AuthContext";
-import { db } from "../../firebase";
+import firebase, { db } from "../../firebase";
 import "./blogsWithComments.css";
 
 const BlogsWithComments = () => {
@@ -11,6 +11,9 @@ const BlogsWithComments = () => {
   const [singlePost, setSinglePost] = useState([]);
   const [getComments, setGetComments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isShowAlert, setIsShowAlert] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState("");
+  console.log(loggedInUser, "loggedin user");
 
   console.log(getComments, "getCOmment");
 
@@ -25,12 +28,16 @@ const BlogsWithComments = () => {
       comment: comment,
       commentedByUserId: currentUser.claims.user_id,
       commentedToPostId: postId,
+      commentedByUserName: loggedInUser,
+      commentedTime: firebase.firestore.Timestamp.now(),
     };
 
     db.collection("comments")
       .add(pushToFirebase)
       .then((docRef) => {
         console.log("Document written with ID: ", docRef.id);
+        document.getElementById("exampleFormControlTextarea1").value = "";
+        setIsShowAlert(true);
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
@@ -50,7 +57,10 @@ const BlogsWithComments = () => {
           const appObj = { commentId: doc.id, ...doc.data() };
           getComments.push(appObj);
         });
-        setGetComments(getComments);
+        const sortedComments = getComments.sort(
+          (a, b) => b.commentedTime - a.commentedTime
+        );
+        setGetComments(sortedComments);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -73,24 +83,48 @@ const BlogsWithComments = () => {
     console.log(singlePost, "single ost");
   };
 
+  //loggedIn user and Commented user is same
+  const getNameOfloggedInUser = () => {
+    db.collection("users")
+      .doc(currentUser.claims.user_id)
+      .onSnapshot((doc) => setLoggedInUser(doc.data().name));
+  };
+
   useEffect(() => getPostById(), []);
   useEffect(() => handleGetComments(), []);
+  useEffect(() => getNameOfloggedInUser(), []);
 
   console.log(singlePost, "singlepost");
   return (
     <div>
       <NavBar />
+      {isShowAlert ? (
+        <div class="alert alert-success alert-dismissible fade show">
+          <strong>Success!</strong> Comment successfully Posted!
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            onClick={() => {
+              setIsShowAlert(false);
+            }}
+          ></button>
+        </div>
+      ) : (
+        ""
+      )}
+
       {isLoading ? (
         <Spinner />
       ) : (
         <div>
           {singlePost.length !== 0 ? (
             <div className="blogsWithComments-container">
-              <div className="post">{singlePost[0].post}</div>
+              <div className="post">{`${singlePost[0].post}.  -------------Posted By: ${singlePost[0].postedBy}`}</div>
               <div className="comment-textarea">
                 <div class="form-group">
                   <label for="exampleFormControlTextarea1" className="label">
-                    Comment
+                    Leave Comments:
                   </label>
                   <textarea
                     class="form-control"
@@ -109,7 +143,12 @@ const BlogsWithComments = () => {
               <div className="comments">
                 <ol>
                   {getComments.map((comt, index) => {
-                    return <li key={index}>{comt.comment}</li>;
+                    return (
+                      <li key={index}>
+                        {comt.comment} -----Commented By:{" "}
+                        {comt.commentedByUserName}{" "}
+                      </li>
+                    );
                   })}
                 </ol>
                 {/* <ol>

@@ -22,6 +22,10 @@ const UserRegister = () => {
     try {
       await signUp(email, password, name);
       console.log("successfulyy registered");
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("exampleInputEmail1").value = "";
+      document.getElementById("exampleInputEmail2").value = "";
     } catch (err) {
       console.log(err, "error");
     }
@@ -53,7 +57,7 @@ const UserRegister = () => {
             <input
               type="email"
               class="form-control"
-              id="exampleInputEmail1"
+              id="email"
               aria-describedby="emailHelp"
               placeholder="Enter email"
               onChange={(e) => setEmail(e.target.value)}
@@ -64,17 +68,17 @@ const UserRegister = () => {
             <input
               type="password"
               class="form-control"
-              id="exampleInputPassword1"
+              id="exampleInputEmail1"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div class="form-group mt-4">
-            <label for="exampleInputPassword1"> Confirm Password</label>
+            <label for="exampleInputPassword2"> Confirm Password</label>
             <input
               type="password"
               class="form-control"
-              id="exampleInputPassword1"
+              id="exampleInputEmail2"
               placeholder="Confirm Password"
               onChange={(e) => setConfirmPassword(e.target.value)}
             />

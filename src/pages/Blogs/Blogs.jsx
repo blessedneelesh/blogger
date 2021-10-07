@@ -21,10 +21,14 @@ const Blogs = () => {
             postId: doc.id,
             ...doc.data(),
           };
+
           posts.push(appObj);
         });
+        const sortedData = posts.sort((a, b) => {
+          return b.createdAt - a.createdAt;
+        });
         console.log(posts, "posts");
-        setAllPosts(posts);
+        setAllPosts(sortedData);
         setIsLoading(false);
       });
   };
@@ -42,10 +46,16 @@ const Blogs = () => {
           <ol>
             {allPosts.map((post, index) => {
               return (
-                <Link to={`/blogs/${post.postId}`}>
-                  {" "}
-                  <li key={index}>{post.post}</li>{" "}
-                </Link>
+                <div style={{ display: "flex" }}>
+                  <Link to={`/blogs/${post.postId}`}>
+                    {" "}
+                    <li key={index}>{post.post}</li>{" "}
+                  </Link>
+                  <span style={{ marginLeft: "auto" }}>
+                    {" "}
+                    ----Posted By:{post.postedBy}
+                  </span>
+                </div>
               );
             })}
           </ol>

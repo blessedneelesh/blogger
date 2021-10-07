@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
       .catch((error) => {
           console.error("Error writing document: ", error);
       });
+      history.push('/')
       }).catch((error) => {
     var errorCode = error.code;
     // var errorMessage = error.message;

@@ -7,7 +7,7 @@ import firebase, { db } from "../../firebase";
 
 const PostBlogs = () => {
   const [post, setPost] = useState("");
-
+  const [isShowAlert, setIsShowAlert] = useState(false);
   const { currentUser, activeUser } = useAuth();
 
   console.log(currentUser, "currentUser", activeUser);
@@ -21,10 +21,13 @@ const PostBlogs = () => {
       postedByUserId: currentUser.claims.user_id,
       createdAt: firebase.firestore.Timestamp.now(),
     };
-
+    // console.log(document.getElementById("exampleFormControlTextarea1").value);
     db.collection("posts")
       .add(pushToFirebase)
       .then((docRef) => {
+        document.getElementById("exampleFormControlTextarea1").value = "";
+        // setPost(""); not working
+        setIsShowAlert(true);
         console.log("Document written with ID: ", docRef.id);
       })
       .catch((error) => {
@@ -39,6 +42,19 @@ const PostBlogs = () => {
         {/* <div className="header">
           <h3>Whats on your mind?</h3>
         </div> */}
+        {isShowAlert ? (
+          <div class="alert alert-success alert-dismissible fade show">
+            <strong>Success!</strong> Your post has been posted!
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              onClick={() => setIsShowAlert(false)}
+            ></button>
+          </div>
+        ) : (
+          ""
+        )}{" "}
         <div className="textarea">
           <div class="form-group">
             <label for="exampleFormControlTextarea1" className="label">
