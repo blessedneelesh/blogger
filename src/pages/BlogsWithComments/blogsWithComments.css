@@ -1,0 +1,7 @@
+.blogsWithComments-container {
+  display: flex;
+  padding: 2rem;
+  /* align-items: center; */
+  width: 100%;
+  flex-direction: column;
+}
