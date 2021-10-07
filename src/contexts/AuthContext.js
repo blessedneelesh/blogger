@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router";
+import {  useHistory } from "react-router";
+import { Route, Redirect } from 'react-router-dom';
+
 import { auth, db } from "../firebase";
 
 const AuthContext = React.createContext();
@@ -18,14 +20,14 @@ export function AuthProvider({ children }) {
 
   function signUp(email, password,name) {
       return auth.createUserWithEmailAndPassword(email,password).then((userCredential)=>{
-        console.log(userCredential.user.uid,'uid of new creacted user')
          db.collection('users').doc(userCredential.user.uid).set({name:name}).then(() => {
           console.log("Document successfully written!");
+
       })
       .catch((error) => {
           console.error("Error writing document: ", error);
       });
-      history.push('/')
+
       }).catch((error) => {
     var errorCode = error.code;
     // var errorMessage = error.message;
@@ -37,12 +39,11 @@ export function AuthProvider({ children }) {
   const login = (email, password) => {
     // localStorage.setItem("loginTime", Date.now());
     return auth.signInWithEmailAndPassword(email, password).then((userCredential) => {
-        // Signed in
+
         var user = userCredential.user;
-        // ...
-        console.log(user,'user signed in')
-        history.push('/')
-        
+        console.log(user,'user signed in')  
+ 
+
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -52,7 +53,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    localStorage.removeItem("loginTime");
+    // localStorage.removeItem("loginTime");
     return auth.signOut();
   };
 
@@ -66,6 +67,7 @@ export function AuthProvider({ children }) {
           .onSnapshot((doc) => {
               console.log("Current data: ", doc.data());
               setActiveUser(doc.data())
+              
           });
           setIsAuthLoading(false);
           console.log(user,'user from context')

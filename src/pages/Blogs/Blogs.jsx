@@ -46,7 +46,7 @@ const Blogs = () => {
           <ol>
             {allPosts.map((post, index) => {
               return (
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", marginTop: "1rem" }}>
                   <Link to={`/blogs/${post.postId}`}>
                     {" "}
                     <li key={index}>{post.post}</li>{" "}

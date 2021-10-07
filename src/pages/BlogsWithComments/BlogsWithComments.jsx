@@ -1,4 +1,3 @@
-import { Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { NavBar, Spinner } from "../../components";
@@ -123,7 +122,10 @@ const BlogsWithComments = () => {
               <div className="post">{`${singlePost[0].post}.  -------------Posted By: ${singlePost[0].postedBy}`}</div>
               <div className="comment-textarea">
                 <div class="form-group">
-                  <label for="exampleFormControlTextarea1" className="label">
+                  <label
+                    for="exampleFormControlTextarea1"
+                    className="label mt-4"
+                  >
                     Leave Comments:
                   </label>
                   <textarea
@@ -133,7 +135,7 @@ const BlogsWithComments = () => {
                     onChange={(e) => setPostComment(e.target.value)}
                   ></textarea>
                   <button
-                    className="btn btn-primary mt-3"
+                    className="btn btn-primary mt-3 mb-3"
                     onClick={() => handleSubmitComment()}
                   >
                     Comment
@@ -141,15 +143,25 @@ const BlogsWithComments = () => {
                 </div>
               </div>
               <div className="comments">
+                <span style={{ marginTop: "1rem", fontSize: "1.5rem" }}>
+                  See Comments
+                </span>
                 <ol>
-                  {getComments.map((comt, index) => {
-                    return (
-                      <li key={index}>
-                        {comt.comment} -----Commented By:{" "}
-                        {comt.commentedByUserName}{" "}
-                      </li>
-                    );
-                  })}
+                  {getComments.length != 0 ? (
+                    <div>
+                      {" "}
+                      {getComments.map((comt, index) => {
+                        return (
+                          <li key={index} className="mt-3">
+                            {comt.comment} -----Commented By:{" "}
+                            {comt.commentedByUserName}{" "}
+                          </li>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    "you dont have any Comments"
+                  )}
                 </ol>
                 {/* <ol>
               <li>Coffee</li>

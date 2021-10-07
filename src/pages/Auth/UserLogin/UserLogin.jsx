@@ -22,32 +22,34 @@ const UserLogin = () => {
     }
   };
 
+  console.log(history.location.state, "console");
+
   useEffect(() => {
     if (currentUser && currentUser !== null) {
       history.push("/");
     }
-  }, []);
+  }, [currentUser]);
 
   return (
     <div className="login-container">
       <form className="login-form">
         <div className="login-form-header">Login</div>
-        <div class="form-group mt-4">
+        <div className="form-group mt-4">
           <label for="exampleInputEmail1">Email address</label>
           <input
             type="email"
-            class="form-control"
+            className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
             placeholder="Enter email"
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div class="form-group mt-4">
+        <div className="form-group mt-4">
           <label for="exampleInputPassword1">Password</label>
           <input
             type="password"
-            class="form-control"
+            className="form-control"
             id="exampleInputPassword1"
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
@@ -56,7 +58,7 @@ const UserLogin = () => {
         <button
           // type="submit"
           onClick={(e) => handleLogin(e)}
-          class="btn btn-primary form-control btn-block mt-4"
+          className="btn btn-primary form-control btn-block mt-4"
         >
           Login
         </button>

@@ -25,7 +25,7 @@ const UserRegister = () => {
       document.getElementById("name").value = "";
       document.getElementById("email").value = "";
       document.getElementById("exampleInputEmail1").value = "";
-      document.getElementById("exampleInputEmail2").value = "";
+      // document.getElementById("exampleInputEmail2").value = "";
     } catch (err) {
       console.log(err, "error");
     }
@@ -35,7 +35,7 @@ const UserRegister = () => {
     if (currentUser && currentUser !== null) {
       history.push("/");
     }
-  }, []);
+  }, [currentUser, history]);
 
   return (
     <div>
@@ -73,7 +73,7 @@ const UserRegister = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div class="form-group mt-4">
+          {/* <div class="form-group mt-4">
             <label for="exampleInputPassword2"> Confirm Password</label>
             <input
               type="password"
@@ -82,7 +82,7 @@ const UserRegister = () => {
               placeholder="Confirm Password"
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
-          </div>
+          </div> */}
           <button
             // type="submit"
             onClick={(e) => handleSignup(e)}
