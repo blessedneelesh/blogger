@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import {  useHistory } from "react-router";
-import { Route, Redirect } from 'react-router-dom';
+import { useHistory } from "react-router";
+import { Route, Redirect } from "react-router-dom";
 
 import { auth, db } from "../firebase";
 
@@ -12,43 +12,47 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
-  console.log(currentUser,'currentUser')
-  const [activeUser,setActiveUser]=useState()
+  console.log(currentUser, "currentUser");
+  const [activeUser, setActiveUser] = useState();
+  console.log(activeUser, "active user in authContext");
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
-  const history=useHistory()
+  const history = useHistory();
 
-  function signUp(email, password,name) {
-      return auth.createUserWithEmailAndPassword(email,password).then((userCredential)=>{
-         db.collection('users').doc(userCredential.user.uid).set({name:name}).then(() => {
-          console.log("Document successfully written!");
-
+  function signUp(email, password, name) {
+    return auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        db.collection("users")
+          .doc(userCredential.user.uid)
+          .set({ name: name })
+          .then(() => {
+            console.log("Document successfully written!");
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
       })
       .catch((error) => {
-          console.error("Error writing document: ", error);
+        var errorCode = error.code;
+        // var errorMessage = error.message;
+        console.log(errorCode, "error");
+        // ..
       });
-
-      }).catch((error) => {
-    var errorCode = error.code;
-    // var errorMessage = error.message;
-    console.log(errorCode,'error')
-    // ..
-  });
   }
 
   const login = (email, password) => {
     // localStorage.setItem("loginTime", Date.now());
-    return auth.signInWithEmailAndPassword(email, password).then((userCredential) => {
-
+    return auth
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
         var user = userCredential.user;
-        console.log(user,'user signed in')  
- 
-
+        console.log(user, "user signed in");
       })
       .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log(errorCode,'erro')
+        console.log(errorCode, "erro");
       });
   };
 
@@ -63,16 +67,15 @@ export function AuthProvider({ children }) {
         auth.currentUser.getIdTokenResult().then((user) => {
           setCurrentUser(user);
 
-          db.collection("users").doc(user.claims.user_id)
-          .onSnapshot((doc) => {
+          db.collection("users")
+            .doc(user.claims.user_id)
+            .onSnapshot((doc) => {
               console.log("Current data: ", doc.data());
-              setActiveUser(doc.data())
-              
-          });
+              setActiveUser(doc.data());
+              console.log();
+            });
           setIsAuthLoading(false);
-          console.log(user,'user from context')
-
-
+          console.log(user, "user from context");
         });
       } else {
         setCurrentUser("");

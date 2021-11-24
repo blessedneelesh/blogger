@@ -12,21 +12,35 @@ const PostBlogs = () => {
 
   console.log(currentUser, "currentUser", activeUser);
 
-  const handlePost = (e) => {
+  //yo nabhaye ni kei hunna ta?? why?
+  interface IPushToFirebase {
+    post: string;
+    postedBy: string;
+    postedByUserId: string;
+    createdAt: {};
+  }
+
+  const handlePost = (e: any) => {
     console.log("clicked");
     console.log(post);
-    let pushToFirebase = {
+
+    let pushToFirebase: IPushToFirebase = {
       post: post,
       postedBy: activeUser.name,
       postedByUserId: currentUser.claims.user_id,
       createdAt: firebase.firestore.Timestamp.now(),
     };
-    // console.log(document.getElementById("exampleFormControlTextarea1").value);
+    console.log(typeof pushToFirebase);
+    console.log(pushToFirebase, "ptf");
     db.collection("posts")
       .add(pushToFirebase)
       .then((docRef) => {
-        document.getElementById("exampleFormControlTextarea1").value = "";
-        // setPost(""); not working
+        (
+          document.getElementById(
+            "exampleFormControlTextarea1"
+          ) as HTMLTextAreaElement
+        ).value = "";
+
         setIsShowAlert(true);
         console.log("Document written with ID: ", docRef.id);
       })
@@ -43,11 +57,11 @@ const PostBlogs = () => {
           <h3>Whats on your mind?</h3>
         </div> */}
         {isShowAlert ? (
-          <div class="alert alert-success alert-dismissible fade show">
+          <div className="alert alert-success alert-dismissible fade show">
             <strong>Success!</strong> Your post has been posted!
             <button
               type="button"
-              class="btn-close"
+              className="btn-close"
               data-bs-dismiss="alert"
               onClick={() => setIsShowAlert(false)}
             ></button>
@@ -56,14 +70,14 @@ const PostBlogs = () => {
           ""
         )}{" "}
         <div className="textarea">
-          <div class="form-group">
-            <label for="exampleFormControlTextarea1" className="label">
+          <div className="form-group">
+            <label htmlFor="exampleFormControlTextarea1" className="label">
               Whats on your mind?
             </label>
             <textarea
-              class="form-control"
+              className="form-control"
               id="exampleFormControlTextarea1"
-              rows="6"
+              rows={parseInt("6")}
               onChange={(e) => setPost(e.target.value)}
             ></textarea>
           </div>
@@ -71,8 +85,11 @@ const PostBlogs = () => {
         <div className="button">
           <button
             type="button"
-            class="btn btn-primary mt-3"
-            onClick={(e) => handlePost(e)}
+            className="btn btn-primary mt-3"
+            onClick={(e) => {
+              console.log(e);
+              handlePost(e);
+            }}
           >
             Post
           </button>

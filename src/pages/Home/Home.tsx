@@ -7,11 +7,11 @@ const Home = () => {
   console.log(currentUser, "currentUser");
   const history = useHistory();
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    await logout();
-    history.push("/user-login");
-  };
+  // const onSubmit = async (e) => {
+  //   e.preventDefault();
+  //   await logout();
+  //   history.push("/user-login");
+  // };
 
   return (
     <>

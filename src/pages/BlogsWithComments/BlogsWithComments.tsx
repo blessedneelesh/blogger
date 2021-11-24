@@ -6,18 +6,45 @@ import firebase, { db } from "../../firebase";
 import "./blogsWithComments.css";
 
 const BlogsWithComments = () => {
-  const [comment, setPostComment] = useState();
-  const [singlePost, setSinglePost] = useState([]);
-  const [getComments, setGetComments] = useState([]);
+  interface IPushToFirebase {
+    comment: string;
+    commentedByUserId: string;
+    commentedToPostId: string;
+    commentedByUserName: string;
+    commentedTime: any;
+  }
+  interface IAppObj {
+    commentId: string;
+    comment: string;
+    commentedByUserId: string;
+    commentedByUserName: string;
+    commentedTime: number;
+    commentedToPostId: string;
+  }
+
+  interface IGetPostByID {
+    createdAt: number;
+    post: string;
+    postedBy: string;
+    postedByUserId: string;
+  }
+
+  const [comment, setPostComment] = useState<string>();
+  const [singlePost, setSinglePost] = useState<IGetPostByID[]>([]);
+  const [getComments, setGetComments] = useState<IAppObj[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowAlert, setIsShowAlert] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState<string>("");
   console.log(loggedInUser, "loggedin user");
 
-  console.log(getComments, "getCOmment");
+  // console.log(getComments, "getCOmment");
 
-  const { postId } = useParams();
-  console.log(postId);
+  type PostId = {
+    postId: string;
+  };
+
+  const { postId } = useParams<PostId>();
+  console.log(typeof postId);
 
   const { currentUser } = useAuth();
   console.log(currentUser, "currentUser");
@@ -35,7 +62,11 @@ const BlogsWithComments = () => {
       .add(pushToFirebase)
       .then((docRef) => {
         console.log("Document written with ID: ", docRef.id);
-        document.getElementById("exampleFormControlTextarea1").value = "";
+        (
+          document.getElementById(
+            "exampleFormControlTextarea1"
+          ) as HTMLTextAreaElement
+        ).value = "";
         setIsShowAlert(true);
       })
       .catch((error) => {
@@ -43,22 +74,35 @@ const BlogsWithComments = () => {
       });
   };
 
+  // how to make interface of an object whose contains spread operator
+
   const handleGetComments = () => {
     setIsLoading(true);
     db.collection("comments")
       .where("commentedToPostId", "==", postId)
       .get()
       .then((querySnapshot) => {
-        const getComments = [];
+        const getComments: IAppObj[] = [];
+
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
-          const appObj = { commentId: doc.id, ...doc.data() };
+          const appObj = {
+            commentId: doc.id,
+            comment: doc.data().comment,
+            commentedByUserId: doc.data().commentedByUserId,
+            commentedByUserName: doc.data().commentedByUserName,
+            commentedTime: doc.data().commentedTime,
+            commentedToPostId: doc.data().commentedToPostId,
+          };
           getComments.push(appObj);
         });
-        const sortedComments = getComments.sort(
+        console.log(getComments, "getcommen");
+        const sortedComments: IAppObj[] = getComments.sort(
           (a, b) => b.commentedTime - a.commentedTime
         );
+
+        console.log(sortedComments, "sortedcom");
         setGetComments(sortedComments);
         setIsLoading(false);
       })
@@ -69,12 +113,12 @@ const BlogsWithComments = () => {
 
   const getPostById = () => {
     console.log("hello");
-    const postArr = [];
+    const postArr: IGetPostByID[] = [];
     db.collection("posts")
       .doc(postId)
       .onSnapshot((doc) => {
-        console.log("Current data: ", doc.data());
-        postArr.push(doc.data());
+        // console.log("Current data: ", doc.data() as IGetPostByID);
+        postArr.push(doc.data() as IGetPostByID);
         setSinglePost(postArr);
       });
 
@@ -84,9 +128,13 @@ const BlogsWithComments = () => {
 
   //loggedIn user and Commented user is same
   const getNameOfloggedInUser = () => {
+    console.log(currentUser.claims.user_id, "from 87");
     db.collection("users")
       .doc(currentUser.claims.user_id)
-      .onSnapshot((doc) => setLoggedInUser(doc.data().name));
+      .onSnapshot((doc) => {
+        // console.log(typeof doc.data().name, "from name");
+        setLoggedInUser(doc.data()?.name);
+      });
   };
 
   useEffect(() => getPostById(), []);
@@ -98,11 +146,11 @@ const BlogsWithComments = () => {
     <div>
       <NavBar />
       {isShowAlert ? (
-        <div class="alert alert-success alert-dismissible fade show">
+        <div className="alert alert-success alert-dismissible fade show">
           <strong>Success!</strong> Comment successfully Posted!
           <button
             type="button"
-            class="btn-close"
+            className="btn-close"
             data-bs-dismiss="alert"
             onClick={() => {
               setIsShowAlert(false);
@@ -121,17 +169,17 @@ const BlogsWithComments = () => {
             <div className="blogsWithComments-container">
               <div className="post">{`${singlePost[0].post}.  -------------Posted By: ${singlePost[0].postedBy}`}</div>
               <div className="comment-textarea">
-                <div class="form-group">
+                <div className="form-group">
                   <label
-                    for="exampleFormControlTextarea1"
+                    htmlFor="exampleFormControlTextarea1"
                     className="label mt-4"
                   >
                     Leave Comments:
                   </label>
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     id="exampleFormControlTextarea1"
-                    rows="6"
+                    rows={parseInt("6")}
                     onChange={(e) => setPostComment(e.target.value)}
                   ></textarea>
                   <button
